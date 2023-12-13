@@ -8,18 +8,18 @@ const app = express();
 // Middleware for parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('Develop/public')); // this gives 'ACCESS' to the public folder, but you still have to provide the routes to it.
+app.use(express.static('public')); // this gives 'ACCESS' to the public folder, but you still have to provide the routes to it.
 
 const PORT = process.env.PORT || 3001;
 
 // Pages to serve up to the client. Different than the ones below.  
 app.get('/', (req, res) => // this route serves up the homepage. which is defaulted to index file.
-      res.sendFile(path.join(__dirname, 'Develop/public/index.html'))
+      res.sendFile(path.join(__dirname, 'public/index.html'))
 );
 app.get('/notes', (req, res) => {// this route serves up the notes page
       // console.log('rEq.pArAms:', req.params);
 
-      res.sendFile(path.join(__dirname, 'Develop/public/notes.html'))
+      res.sendFile(path.join(__dirname, 'public/notes.html'))
 });
 
 
@@ -29,7 +29,7 @@ app.get('/api/notes', (req, res) => { // done..
 
       const dbFilePath = path.join(__dirname, 'db.json');
 
-      fs.readFile('./Develop/db/db.json', 'utf8', (err, data) => {
+      fs.readFile('./db/db.json', 'utf8', (err, data) => {
 
             if (err) {
                   console.error(err);
@@ -43,7 +43,7 @@ app.get('/api/notes', (req, res) => { // done..
 });
 app.post('/api/notes', (req, res) => { // done.. 
       // Read the data from db.json
-      const notes = JSON.parse(fs.readFileSync('./Develop/db/db.json', 'utf8'));
+      const notes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
 
       const newNote = {
             id: uuidv4(),
@@ -53,12 +53,12 @@ app.post('/api/notes', (req, res) => { // done..
 
       notes.push(newNote);
 
-      fs.writeFileSync('./Develop/db/db.json', JSON.stringify(notes));
+      fs.writeFileSync('./db/db.json', JSON.stringify(notes));
 
       res.json(newNote);
 });
 app.delete('/api/notes/:id', (req, res) => { // done..
-      const notesObj = JSON.parse(fs.readFileSync('./Develop/db/db.json', 'utf8'));// WORKING.
+      const notesObj = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));// WORKING.
       const requestedId =req.params.id;
       // console.log("notesObj: ", notesObj);
       // console.log('rEq.pArAms.id: ', requestedId);
@@ -76,7 +76,7 @@ app.delete('/api/notes/:id', (req, res) => { // done..
 
       notesObj.splice(noteIndex, 1);
 
-      fs.writeFileSync('./Develop/db/db.json', JSON.stringify(notesObj));
+      fs.writeFileSync('./db/db.json', JSON.stringify(notesObj));
 
       res.json({ message: 'NOtE dElEtEd' });
 });
