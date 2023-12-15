@@ -1,10 +1,10 @@
 let noteTitle;
 let noteText;
-let saveNoteBtn; // 'save' icon not visible until note text is inputed.
-let newNoteBtn; // ' + ' button
-let noteList; // gets acces to the noteList container.
+let saveNoteBtn;
+let newNoteBtn;
+let noteList;
 
-if (window.location.pathname === './notes') { // assignes variables to the selectors if we are on /page path.
+if (window.location.pathname === '/notes') {
   noteTitle = document.querySelector('.note-title');
   noteText = document.querySelector('.note-textarea');
   saveNoteBtn = document.querySelector('.save-note');
@@ -12,7 +12,7 @@ if (window.location.pathname === './notes') { // assignes variables to the selec
   noteList = document.querySelectorAll('.list-container .list-group');
 }
 
-// Show an element ( for showing notes inputs??? )
+// Show an element
 const show = (elem) => {
   elem.style.display = 'inline';
 };
@@ -22,16 +22,17 @@ const hide = (elem) => {
   elem.style.display = 'none';
 };
 
-let activeNote = {};// activeNote is used to keep track of the note in the textarea
+// activeNote is used to keep track of the note in the textarea
+let activeNote = {};
 
-//#region API Calls: 
 const getNotes = () =>
   fetch('/api/notes', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
-  });
+  })
+
 const saveNote = (note) =>
   fetch('/api/notes', {
     method: 'POST',
@@ -40,14 +41,14 @@ const saveNote = (note) =>
     },
     body: JSON.stringify(note),
   });
+
 const deleteNote = (id) =>
-  fetch(`/api/notes/${id}`, { 
+  fetch(`/api/notes/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
   });
-//#endregion
 
 const renderActiveNote = () => {
   hide(saveNoteBtn);
@@ -71,7 +72,6 @@ const handleNoteSave = () => {
     text: noteText.value,
   };
   saveNote(newNote).then(() => {
-    console.log("handleNoteSave is ExecUtIng!!!")
     getAndRenderNotes();
     renderActiveNote();
   });
@@ -84,9 +84,8 @@ const handleNoteDelete = (e) => {
 
   const note = e.target;
   const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
-  console.log('note', note);
 
-  if (activeNote.id === noteId) { // what does this do? it clears the activeNote object.
+  if (activeNote.id === noteId) {
     activeNote = {};
   }
 
@@ -174,11 +173,11 @@ const renderNoteList = async (notes) => {
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
 
-if (window.location.pathname === './notes') {
+if (window.location.pathname === '/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
   newNoteBtn.addEventListener('click', handleNewNoteView);
   noteTitle.addEventListener('keyup', handleRenderSaveBtn);
   noteText.addEventListener('keyup', handleRenderSaveBtn);
-} // basically if the url pathname is ./notes, add event listeners to all input events.
+}
 
 getAndRenderNotes();
